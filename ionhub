@@ -1,12 +1,28 @@
-local Library;
-do
+    --[[
+
+        Library Made for https://octohook.xyz/
+        Developed by liam#4567
+        Modified by tatar0071#0627
+
+        Ik this code is really shit in some places lol
+        will rewrite again i was just using some rly old stuff that i was lazy to rewrite
+        could've been a lot better and more optimized in some places and some things arent done as they should've been
+        got lazy when trying to make disable all roblox input when ui is open sooo that will be added later =)
+
+    ]]
+
+    -- // Load
+
     local startupArgs = ({...})[1] or {}
-    if getgenv().Library ~= nil then
-        getgenv().Library:Unload();
+
+    if getgenv().library ~= nil then
+        getgenv().library:Unload();
     end
+
     if not game:IsLoaded() then
         game.Loaded:Wait()
     end
+
     local function gs(a)
         return game:GetService(a)
     end
@@ -15,13 +31,18 @@ do
     local players, http, runservice, inputservice, tweenService, stats, actionservice = gs('Players'), gs('HttpService'), gs('RunService'), gs('UserInputService'), gs('TweenService'), gs('Stats'), gs('ContextActionService')
     local localplayer = players.LocalPlayer
 
+    local setByConfig = false
     local floor, ceil, huge, pi, clamp = math.floor, math.ceil, math.huge, math.pi, math.clamp
     local c3new, fromrgb, fromhsv = Color3.new, Color3.fromRGB, Color3.fromHSV
     local next, newInstance, newUDim2, newVector2 = next, Instance.new, UDim2.new, Vector2.new
     local isexecutorclosure = isexecutorclosure or is_synapse_function or is_sirhurt_closure or iskrnlclosure;
-    local executor = (syn and 'syn' or getexecutorname and getexecutorname() or 'unknown')
+    local executor = (
+        syn and 'syn' or
+        getexecutorname and getexecutorname() or
+        'unknown'
+    )
 
-    Library = {
+    local library = {
         windows = {};
         indicators = {};
         flags = {};
@@ -47,14 +68,15 @@ do
             ['ping'] = 0;
         };
         images = {
-            ['gradientp90'] = 'https://github.com/skr9ter/90/blob/main/gradientp90.png';
-            ['gradientp45'] = 'https://github.com/skr9ter/45/blob/main/gradientp45.png';
-            ['colorhue'] = 'https://github.com/skr9ter/clrsat1/blob/main/colorhue.png';
-            ['colortrans'] = 'https://github.com/skr9ter/clrtrans/blob/main/colortrans.png';
-            ['colorsat1'] = 'https://github.com/skr9ter/clrsta2/blob/main/colorsat1.png';
-            ['colorsat2'] = 'https://github.com/skr9ter/clrsat22/blob/main/colorsat2.png';
+            ['gradientp90'] = 'https://raw.githubusercontent.com/tehtestedd/fonts/main/gradientp90.png';
+            ['gradientp45'] = 'https://raw.githubusercontent.com/tehtestedd/fonts/main/unknown.png';
+            ['colorhue'] = 'https://raw.githubusercontent.com/tehtestedd/fonts/main/colorhue.png';
+            ['colortrans'] = 'https://raw.githubusercontent.com/tehtestedd/fonts/main/unknown%20(43).png';
+            ['colorsat1'] = 'https://raw.githubusercontent.com/tehtestedd/fonts/main/colorsat1.png';
+            ['colorsat2'] = 'https://raw.githubusercontent.com/tehtestedd/fonts/main/colorsat2.png';
         };
         numberStrings = {['Zero'] = 0, ['One'] = 1, ['Two'] = 2, ['Three'] = 3, ['Four'] = 4, ['Five'] = 5, ['Six'] = 6, ['Seven'] = 7, ['Eight'] = 8, ['Nine'] = 9};
+        signal = loadstring(game:HttpGet('https://raw.githubusercontent.com/Quenty/NevermoreEngine/main/src/signal/src/Shared/Signal.lua'))();
         open = false;
         opening = false;
         hasInit = false;
@@ -63,7 +85,7 @@ do
         fileext = startupArgs.fileext or '.json';
     }
 
-    Library.themes = {
+    library.themes = {
         {
             name = 'Default',
             theme = {
@@ -248,7 +270,6 @@ do
         }
     }
 
-    Library.signal = loadstring(game:HttpGetAsync('https://raw.githubusercontent.com/Quenty/NevermoreEngine/main/src/signal/src/Shared/Signal.lua'))();
     local blacklistedKeys = {
         Enum.KeyCode.Unknown,
         Enum.KeyCode.W,
@@ -270,7 +291,7 @@ do
         Enum.KeyCode.Six,
         Enum.KeyCode.Seven,
         Enum.KeyCode.Eight,
-        Enum.KeyCode.Nine,
+        Enum.KeyCode.Nine
     }
 
     local keyNames = {
@@ -278,129 +299,26 @@ do
         [Enum.KeyCode.RightControl] = 'RCTRL';
         [Enum.KeyCode.LeftShift] = 'LSHIFT';
         [Enum.KeyCode.RightShift] = 'RSHIFT';
-        [Enum.KeyCode.Underscore] = '_';
-        [Enum.KeyCode.Minus] = '-';
-        [Enum.KeyCode.Plus] = '+';
-        [Enum.KeyCode.Period] = '.';
-        [Enum.KeyCode.Slash] = '/';
-        [Enum.KeyCode.BackSlash] = '\\';
-        [Enum.KeyCode.Question] = '?';
         [Enum.UserInputType.MouseButton1] = 'MB1';
         [Enum.UserInputType.MouseButton2] = 'MB2';
         [Enum.UserInputType.MouseButton3] = 'MB3';
     }
 
-    Library.button1down = Library.signal.new()
-    Library.button1up   = Library.signal.new()
-    Library.mousemove   = Library.signal.new()
-    Library.unloaded    = Library.signal.new();
+    library.button1down = library.signal.new()
+    library.button1up   = library.signal.new()
+    library.mousemove   = library.signal.new()
+    library.unloaded    = library.signal.new();
 
-    local button1down, button1up, mousemove = Library.button1down, Library.button1up, Library.mousemove
+    local button1down, button1up, mousemove = library.button1down, library.button1up, library.mousemove
     local mb1down = false;
 
-    local utility = Library.utility
+    local utility = library.utility
     do
 
         function utility:Connection(signal, func)
             local c = signal:Connect(func)
-            table.insert(Library.connections, c)
+            table.insert(library.connections, c)
             return c
-        end
-
-        function utility:DeepCopyTable(t)
-            local copy = {}
-            for i,v in next, t do
-                if typeof(v) == 'table' then
-                    copy[i] = self:DeepCopyTable(v)
-                else
-                    copy[i] = v
-                end
-            end
-            return copy
-        end
-
-        function utility:SetProperties(t, props)
-            for i,v in next, props do
-                t[i] = v;
-            end
-            return t
-        end
-
-        function utility:CFrameToViewport(cf)
-            local cam = workspace.CurrentCamera;
-            return cam:WorldToViewportPoint((cf * (cf - cf.p):ToObjectSpace(cam.CFrame - cam.CFrame.p)).p);
-        end
-
-        function utility:HasCharacter(plr, minhealth)
-            if plr.Character ~= nil and plr.Character:FindFirstChild('HumanoidRootPart') and plr.Character:FindFirstChild('Humanoid') and plr.Character.Humanoid.Health > (minhealth or 0) then
-                return true, plr.Character;
-            end
-            return false;
-        end
-
-        function utility:Raycast(a,b,c)
-            c = typeof(c) == 'table' and c or {}
-            local params = RaycastParams.new();
-            params.IgnoreWater = true;
-            params.FilterType = Enum.RaycastFilterType.Blacklist;
-            params.FilterDescendantsInstances = c;
-        
-            local ray = workspace:Raycast(a,b,params);
-            if ray ~= nil then -- it was erroring without 2 if statements lol idk why
-                if ray.Instance.Transparency >= .25 or not ray.Instance.CanCollide then
-                    table.insert(c, ray.Instance);
-                    local newray = self:Raycast(a,b,c)
-                    if newray ~= nil then
-                        ray = newray
-                    end
-                end
-            end
-            return ray
-        end
-
-        function utility:Dragify(object, background, dragoutline, dragoutlineBorder)
-            local start, objectposition, dragging, currentpos
-        
-            utility:Connection(object.MouseButton1Down, function(input)
-                dragging = true
-                start = input
-                dragoutline.Visible = true
-                dragoutlineBorder.Visible = true;
-                objectposition = background.Position
-            end)
-            utility:Connection(mousemove, function(input)
-                if dragging then 
-                    currentpos = UDim2.new(objectposition.X.Scale, objectposition.X.Offset + (input - start).X, objectposition.Y.Scale, objectposition.Y.Offset + (input - start).Y)
-                    dragoutline.Position = currentpos
-                    dragoutlineBorder.Position = currentpos
-                end;
-            end)
-            utility:Connection(button1up, function(input)
-                dragging = false
-                dragoutline.Visible = false
-                dragoutlineBorder.Visible = false;
-                background.Position = currentpos
-            end)
-
-        end 
-        
-
-        function utility:EnableConnections(connection, ignoresynapse)
-            for i,v in next, getconnections(connection) do
-                if v.Function ~= nil and ignoresynapse and isexecutorclosure(v.Function) then
-                    return
-                end
-                v:Enable()
-            end
-        end
-
-        function utility:DisableConnections(connection, ignoresynapse)
-            for i,v in next, getconnections(connection) do
-                if v.Function ~= nil and ignoresynapse and isexecutorclosure(v.Function) then
-                    return
-                end
-                v:Disable()
-            end
         end
 
         function utility:Instance(class, properties)
@@ -413,22 +331,11 @@ do
                     printconsole(e, 255,0,0)
                 end
             end
-            table.insert(Library.instances, inst);
             return inst
         end
 
         function utility:HasProperty(obj, prop)
             return ({(pcall(function() local a = obj[prop] end))})[1]
-        end
-
-        function utility:CheckEnum(enum,enumitem)
-            if typeof(enumitem) == 'EnumItem' then
-                return ({pcall(function()
-                    local a = enum[enumitem.Name]
-                end)})[1]
-            else
-                return false
-            end
         end
 
         function utility:ToRGB(c3)
@@ -452,70 +359,55 @@ do
             return newVector2(x,y)
         end
 
-        function utility:Vector2ToUDim2(a,b)
-            local x,y
-            x = self:ConvertNumberRange(a.X, 0, b.X, 0, 1)
-            y = self:ConvertNumberRange(a.Y, 0, b.Y, 0, 1)
-            return newUDim2(x,0,y,0)
-        end
-
         function utility:Lerp(a,b,c)
             return a + (b-a) * c
         end
 
-        function utility:Bezier(p1,p2,p3,t)
-            local a = self:Lerp(p1, p2, t);
-            local b = self:Lerp(p2, p3, t);
-            return self:Lerp(a, b, t)
-        end
-
         function utility:Tween(obj, prop, val, time, direction, style)
-            task.spawn(function()
-                if self:HasProperty(obj, prop) then
-                    if Library.tweens[obj] then
-                        if Library.tweens[obj][prop] then
-                            Library.tweens[obj][prop]:Cancel()
-                        end
+            if self:HasProperty(obj, prop) then
+                if library.tweens[obj] then
+                    if library.tweens[obj][prop] then
+                        library.tweens[obj][prop]:Cancel()
                     end
-        
-                    local startVal = obj[prop];
-                    local a = 0;
-                    local tween = {
-                        Completed = Library.signal.new();
-                    };
-        
-                    Library.tweens[obj] = Library.tweens[obj] or {};
-                    Library.tweens[obj][prop] = tween;
-        
-                    tween.Connection = self:Connection(runservice.RenderStepped, function(dt)
-                        a = a + (dt / time);
-                        if a >= 1 or obj == nil then
-                            tween:Cancel();
-                        end
-                        pcall(function()
-                            local progress = tweenService:GetValue(a, style or Enum.EasingStyle.Linear, direction or Enum.EasingDirection.In)
-                            local newVal
-                            if typeof(startVal) == 'number' then
-                                newVal = utility:Lerp(startVal, val, progress);
-                            else
-                                newVal = startVal:Lerp(val, progress);
-                            end
-                            obj[prop] = newVal;
-                        end)
-                    end)
-        
-                    function tween:Cancel()
-                        tween.Connection:Disconnect();
-                        tween.Completed:Fire();
-                        table.clear(tween);
-                        Library.tweens[obj][prop] = nil;
-                    end
-                    
-                    return tween;
-                else
-                    printconsole('unable to tween: invalid property '..tostring(prop)..' for object '..tostring(obj), 255,0,0)
                 end
-            end)
+
+                local startVal = obj[prop];
+                local a = 0;
+                local tween = {
+                    Completed = library.signal.new();
+                };
+
+                library.tweens[obj] = library.tweens[obj] or {};
+                library.tweens[obj][prop] = tween;
+
+                tween.Connection = self:Connection(runservice.RenderStepped, function(dt)
+                    a = a + (dt / time);
+                    if a >= 1 or obj == nil then
+                        tween:Cancel();
+                    end
+                    pcall(function()
+                        local progress = tweenService:GetValue(a, style or Enum.EasingStyle.Linear, direction or Enum.EasingDirection.In)
+                        local newVal
+                        if typeof(startVal) == 'number' then
+                            newVal = utility:Lerp(startVal, val, progress);
+                        else
+                            newVal = startVal:Lerp(val, progress);
+                        end
+                        obj[prop] = newVal;
+                    end)
+                end)
+
+                function tween:Cancel()
+                    tween.Connection:Disconnect();
+                    tween.Completed:Fire();
+                    table.clear(tween);
+                    library.tweens[obj][prop] = nil;
+                end
+                
+                return tween;
+            else
+                printconsole('unable to tween: invalid property '..tostring(prop)..' for object '..tostring(obj), 255,0,0)
+            end
         end
 
         function utility:DetectTableChange(indexcallback,newindexcallback)
@@ -542,7 +434,7 @@ do
 
         function utility:GetHoverObject()
             local objects = {}
-            for i,v in next, Library.drawings do
+            for i,v in next, library.drawings do
                 if v.Object.Visible and v.Class == 'Square' and self:MouseOver(v.Object) then
                     table.insert(objects,v.Object)
                 end
@@ -569,18 +461,18 @@ do
                 AbsolutePosition = newVector2(0,0);
                 Hover = false;
                 Visible = true;
-                MouseButton1Down = Library.signal.new();
-                MouseButton2Down = Library.signal.new();
-                MouseButton1Up = Library.signal.new();
-                MouseButton2Up = Library.signal.new();
-                MouseEnter = Library.signal.new();
-                MouseLeave = Library.signal.new();
+                MouseButton1Down = library.signal.new();
+                MouseButton2Down = library.signal.new();
+                MouseButton1Up = library.signal.new();
+                MouseButton2Up = library.signal.new();
+                MouseEnter = library.signal.new();
+                MouseLeave = library.signal.new();
                 Class = class;
             }
 
             function drawing:Update()
                 -- if drawing.Parent then
-                    local parent = drawing.Parent ~= nil and Library.drawings[drawing.Parent.Object] or nil
+                    local parent = drawing.Parent ~= nil and library.drawings[drawing.Parent.Object] or nil
                     local parentSize,parentPos,parentVis = workspace.CurrentCamera.ViewportSize, Vector2.new(0,0), true;
                     if parent ~= nil then
                         parentSize = (parent.Class == 'Square' or parent.Class == 'Image') and parent.Object.Size or parent.Class == 'Text' and parent.TextBounds or workspace.CurrentCamera.ViewportSize
@@ -620,7 +512,7 @@ do
                 return descendants;
             end
 
-            Library.drawings[drawing.Object] = drawing
+            library.drawings[drawing.Object] = drawing
 
             -- this is really stupid lol
             local proxy = utility:DetectTableChange(
@@ -662,7 +554,7 @@ do
                         drawing:Update()
                     end
                     if table.find({'ThemeColor','OutlineThemeColor','ThemeColorOffset','OutlineThemeColorOffset'},i) and lastval ~= v then
-                        Library.UpdateThemeColors()
+                        library.UpdateThemeColors()
                     end
 
                 end
@@ -677,7 +569,7 @@ do
                     drawing.Parent.Children[drawing.Object] = nil;
                 end
 
-                Library.drawings[drawing.Object] = nil;
+                library.drawings[drawing.Object] = nil;
                 drawing.Object:Remove();
                 table.clear(drawing);
 
@@ -702,10 +594,10 @@ do
         end
     end
 
-    Library.utility = utility
+    library.utility = utility
 
-    function Library:Unload()
-        Library.unloaded:Fire();
+    function library:Unload()
+        library.unloaded:Fire();
         for _,c in next, self.connections do
             c:Disconnect()
         end
@@ -713,10 +605,10 @@ do
             obj:Remove()
         end
         table.clear(self.drawings)
-        getgenv().Library = nil
+        getgenv().library = nil
     end
 
-    function Library:init()
+    function library:init()
         if self.hasInit then
             return
         end
@@ -727,14 +619,6 @@ do
         makefolder(self.cheatname..'/assets')
         makefolder(self.cheatname..'/'..self.gamename)
         makefolder(self.cheatname..'/'..self.gamename..'/configs');
-        makefolder(self.cheatname..'/'..self.gamename..'/scripts');
-        makefolder(self.cheatname..'/'..self.gamename..'/autoexec');
-        if not isfile(self.cheatname..'_friendlist.txt') then
-            writefile(self.cheatname..'_friendlist.txt', http:JSONEncode({}))
-        end
-        if not isfile(self.cheatname..'_enemylist.txt') then
-            writefile(self.cheatname..'_enemylist.txt', http:JSONEncode({}))
-        end
 
         function self:SetTheme(theme)
             for i,v in next, theme do
@@ -749,7 +633,6 @@ do
             end
         end
 
-
         function self:LoadConfig(name)
             local cfg = self:GetConfig(name)
             if not cfg then
@@ -757,35 +640,28 @@ do
                 return
             end
 
-            cfg = http:JSONDecode(cfg);
-
             local s,e = pcall(function()
-                for flag, option in next, self.options do
-                    local s,e = pcall(function()
-                        local value = cfg[flag];
-                        if value == nil then value = option.default end
+                setByConfig = true
+                for flag,value in next, http:JSONDecode(cfg) do
+                    local option = library.options[flag]
+                    if option ~= nil then
                         if option.class == 'toggle' then
-                            option:SetState(value or false);
+                            option:SetState(value == nil and false or (value == 1 and true or false));
                         elseif option.class == 'slider' then
-                            option:SetValue(value or 0);
+                            option:SetValue(value == nil and 0 or value)
                         elseif option.class == 'bind' then
-                            option:SetBind((utility:HasProperty(Enum.KeyCode, value) and Enum.KeyCode[value]) or (utility:HasProperty(Enum.UserInputType, value) and Enum.UserInputType[value] ) or value or 'none');
+                            option:SetBind(value == nil and 'none' or (utility:HasProperty(Enum.KeyCode, value) and Enum.KeyCode[value] or Enum.UserInputType[value]));
                         elseif option.class == 'color' then
-                            if value == nil then value = {1,1,1,0} end
-                            if value == option.default then
-                                local c3, a = option.default, option.defaulttrans or 0;
-                                value = {c3.R, c3.G, c3.B, a}
-                            end
-                            option:SetColor(c3new(value[1], value[2], value[3]));
-                            option:SetTrans(value[4]);
+                            option:SetColor(value == nil and c3new(1,1,1) or c3new(value[1], value[2], value[3]));
+                            option:SetTrans(value == nil and 1 or value[4]);
                         elseif option.class == 'list' then
-                            option:Select(value or (option.multi and '' or option.values[1] or ''));
+                            option:Select(value == nil and '' or value);
+                        elseif option.class == 'box' then
+                            option:SetInput(value == nil and '' or value)
                         end
-                    end)
-                    if not s then
-                        self:SendNotification('Error loading config flag ['..tostring(flag)..']: '..e);
                     end
                 end
+                setByConfig = false
             end)
 
             if s then
@@ -805,7 +681,7 @@ do
                 local cfg = {};
                 for flag,option in next, self.options do
                     if option.class == 'toggle' then
-                        cfg[flag] = option.state;
+                        cfg[flag] = option.state and 1 or 0;
                     elseif option.class == 'slider' then
                         cfg[flag] = option.value;
                     elseif option.class == 'bind' then
@@ -819,6 +695,8 @@ do
                         }
                     elseif option.class == 'list' then
                         cfg[flag] = option.selected;
+                    elseif option.class == 'box' then
+                        cfg[flag] = option.input
                     end
                 end
                 writefile(self.cheatname..'/'..self.gamename..'/configs/'..name..self.fileext, http:JSONEncode(cfg));
@@ -833,22 +711,9 @@ do
 
         for i,v in next, self.images do
             if not isfile(self.cheatname..'/assets/'..i..'.oh') then
-                printconsole('downloading '..i..' to image cache')
-                writefile(self.cheatname..'/assets/'..i..'.oh',
-                    syn.crypt.custom.encrypt(
-                        'aes-ctr',
-                        game:HttpGet(v),
-                        '4XGudgFuutoHUM2Ctwsq4YrQ',
-                        'zP5JJWPSIbf5Xuuy'
-                    )
-                )
+                writefile(self.cheatname..'/assets/'..i..'.oh', game:HttpGet(v))
             end
-            self.images[i] = syn.crypt.custom.decrypt(
-                'aes-ctr',
-                readfile(self.cheatname..'/assets/'..i..'.oh'),
-                '4XGudgFuutoHUM2Ctwsq4YrQ',
-                'zP5JJWPSIbf5Xuuy'
-            )
+            self.images[i] = readfile(self.cheatname..'/assets/'..i..'.oh');
         end
 
         self.cursor1 = utility:Draw('Triangle', {Filled = true, Color = fromrgb(255,255,255), ZIndex = self.zindexOrder.cursor});
@@ -880,30 +745,23 @@ do
             Transparency = 1;
         })
 
-        utility:Connection(Library.unloaded, function()
+        utility:Connection(library.unloaded, function()
             screenGui:Destroy()
-        end)
-
-        local namecall; namecall = hookmetamethod(game, '__namecall', function(obj, ...)
-            if getnamecallmethod() == 'Destroy' and Library.instances[obj] ~= nil then
-                Library.instances[obj] = nil;
-            end
-            return namecall(obj, ...)
         end)
 
         utility:Connection(inputservice.InputBegan, function(input, gpe)
             if self.hasInit then
-                if input.KeyCode == self.toggleKey and not Library.opening and not gpe then
+                if input.KeyCode == self.toggleKey and not library.opening and not gpe then
                     self:SetOpen(not self.open)
                     task.spawn(function()
-                        Library.opening = true;
+                        library.opening = true;
                         task.wait(.15);
-                        Library.opening = false;
+                        library.opening = false;
                     end)
                 end
-                if Library.open then
+                if library.open then
                     local hoverObj = utility:GetHoverObject();
-                    local hoverObjData = Library.drawings[hoverObj];
+                    local hoverObjData = library.drawings[hoverObj];
                     if input.UserInputType == Enum.UserInputType.MouseButton1 then
                         mb1down = true;
                         button1down:Fire()
@@ -912,10 +770,10 @@ do
                         end
 
                         -- // Update Sliders Click
-                        if Library.draggingSlider ~= nil then
-                            local rel = inputservice:GetMouseLocation() - Library.draggingSlider.objects.background.Object.Position;
-                            local val = utility:ConvertNumberRange(rel.X, 0 , Library.draggingSlider.objects.background.Object.Size.X, Library.draggingSlider.min, Library.draggingSlider.max);
-                            Library.draggingSlider:SetValue(val)
+                        if library.draggingSlider ~= nil then
+                            local rel = inputservice:GetMouseLocation() - library.draggingSlider.objects.background.Object.Position;
+                            local val = utility:ConvertNumberRange(rel.X, 0 , library.draggingSlider.objects.background.Object.Size.X, library.draggingSlider.min, library.draggingSlider.max);
+                            library.draggingSlider:SetValue(val)
                         end
 
                     elseif input.UserInputType == Enum.UserInputType.MouseButton2 then
@@ -928,9 +786,9 @@ do
         end)
 
         utility:Connection(inputservice.InputEnded, function(input, gpe)
-            if self.hasInit and Library.open then
+            if self.hasInit and library.open then
                 local hoverObj = utility:GetHoverObject();
-                local hoverObjData = Library.drawings[hoverObj];
+                local hoverObjData = library.drawings[hoverObj];
 
                 if input.UserInputType == Enum.UserInputType.MouseButton1 then
                     mb1down = false;
@@ -947,40 +805,40 @@ do
         end)
 
         utility:Connection(inputservice.InputChanged, function(input, gpe)
-            if input.UserInputType == Enum.UserInputType.MouseMovement and Library.open then
+            if input.UserInputType == Enum.UserInputType.MouseMovement then
+                if library.open then
+                    mousemove:Fire(inputservice:GetMouseLocation());
+                    updateCursor();
 
-                mousemove:Fire(inputservice:GetMouseLocation());
-                updateCursor();
-
-                if Library.CurrentTooltip ~= nil then
-                    local mousePos = inputservice:GetMouseLocation()
-                    tooltipObjects.background.Position = UDim2.new(0,mousePos.X + 15,0,mousePos.Y + 15)
-                    tooltipObjects.background.Size = UDim2.new(0,tooltipObjects.text.TextBounds.X + 6 + (Library.CurrentTooltip.risky and 60 or 0),0,tooltipObjects.text.TextBounds.Y + 2)
-                end
-
-                local hoverObj = utility:GetHoverObject();
-                for _,v in next, Library.drawings do
-                    local hover = hoverObj == v.Object;
-                    if hover and not v.Hover then
-                        v.Hover = true;
-                        v.MouseEnter:Fire(inputservice:GetMouseLocation());
-                    elseif not hover and v.Hover then
-                        v.Hover = false;
-                        v.MouseLeave:Fire(inputservice:GetMouseLocation());
-                    end
-                end
-
-                if mb1down then
-
-                    -- // Update Sliders Drag
-                    if Library.draggingSlider ~= nil then
-                        local rel = inputservice:GetMouseLocation() - Library.draggingSlider.objects.background.Object.Position;
-                        local val = utility:ConvertNumberRange(rel.X, 0 , Library.draggingSlider.objects.background.Object.Size.X, Library.draggingSlider.min, Library.draggingSlider.max);
-                        Library.draggingSlider:SetValue(val)
+                    if library.CurrentTooltip ~= nil then
+                        local mousePos = inputservice:GetMouseLocation()
+                        tooltipObjects.background.Position = UDim2.new(0,mousePos.X + 15,0,mousePos.Y + 15)
+                        tooltipObjects.background.Size = UDim2.new(0,tooltipObjects.text.TextBounds.X + 6 + (library.CurrentTooltip.risky and 60 or 0),0,tooltipObjects.text.TextBounds.Y + 2)
                     end
 
-                end
+                    local hoverObj = utility:GetHoverObject();
+                    for _,v in next, library.drawings do
+                        local hover = hoverObj == v.Object;
+                        if hover and not v.Hover then
+                            v.Hover = true;
+                            v.MouseEnter:Fire(inputservice:GetMouseLocation());
+                        elseif not hover and v.Hover then
+                            v.Hover = false;
+                            v.MouseLeave:Fire(inputservice:GetMouseLocation());
+                        end
+                    end
 
+                    if mb1down then
+
+                        -- // Update Sliders Drag
+                        if library.draggingSlider ~= nil then
+                            local rel = inputservice:GetMouseLocation() - library.draggingSlider.objects.background.Object.Position;
+                            local val = utility:ConvertNumberRange(rel.X, 0 , library.draggingSlider.objects.background.Object.Size.X, library.draggingSlider.min, library.draggingSlider.max);
+                            library.draggingSlider:SetValue(val)
+                        end
+
+                    end
+                end
             end
         end)
         
@@ -988,7 +846,7 @@ do
             self.open = bool;
             screenGui.Enabled = bool;
 
-            if bool and Library.flags.disablemenumovement then
+            if bool and library.flags.disablemenumovement then
                 actionservice:BindAction(
                     'FreezeMovement',
                     function()
@@ -1001,23 +859,22 @@ do
                 actionservice:UnbindAction('FreezeMovement');
             end
 
-            if not bool and tooltipObjects.background.Visible then
-                tooltipObjects.background.Visible = false;
-            end
-
             updateCursor();
             for _,window in next, self.windows do
                 window:SetOpen(bool);
             end
+
+            library.CurrentTooltip = nil;
+            tooltipObjects.background.Visible = false
         end
 
         function self.UpdateThemeColors()
-            for _,v in next, Library.drawings do
-                if v.ThemeColor and Library.theme[v.ThemeColor] then
-                    v.Object.Color = utility:AddRGB(Library.theme[v.ThemeColor],fromrgb(v.ThemeColorOffset,v.ThemeColorOffset,v.ThemeColorOffset))
+            for _,v in next, library.drawings do
+                if v.ThemeColor and library.theme[v.ThemeColor] then
+                    v.Object.Color = utility:AddRGB(library.theme[v.ThemeColor],fromrgb(v.ThemeColorOffset,v.ThemeColorOffset,v.ThemeColorOffset))
                 end
-                if v.ThemeColorOutline and Library.theme[v.ThemeColorOutline] then
-                    v.Object.OutlineColor = utility:AddRGB(Library.theme[v.ThemeColorOutline],fromrgb(v.OutlineThemeColorOffset,v.OutlineThemeColorOffset,v.OutlineThemeColorOffset))
+                if v.ThemeColorOutline and library.theme[v.ThemeColorOutline] then
+                    v.Object.OutlineColor = utility:AddRGB(library.theme[v.ThemeColorOutline],fromrgb(v.OutlineThemeColorOffset,v.OutlineThemeColorOffset,v.OutlineThemeColorOffset))
                 end
             end
         end
@@ -1103,9 +960,9 @@ do
             end
 
             function notification:Remove()
+                library.notifications[notification] = nil;
                 self.holder:Remove();
-                Library.notifications[notification] = nil;
-                Library:UpdateNotifications()
+                library:UpdateNotifications()
             end
 
             task.spawn(function()
@@ -1114,10 +971,16 @@ do
                 task.wait();
                 utility:Tween(notification.background, 'Position', newUDim2(0,0,0, 0), .1);
                 task.wait(time);
-                notification:Remove()
+                for i,v in next, notification do
+                    if typeof(v) ~= 'function' then
+                        utility:Tween(v, 'Transparency', 0, .15);
+                    end
+                end
+                utility:Connection(utility:Tween(notification.background, 'Position', newUDim2(0,-500,0, 0), .25).Completed, (function()
+                    notification:Remove();
+                end))
             end)
 
-            return notification
         end
 
         function self:UpdateNotifications()
@@ -1231,7 +1094,7 @@ do
 
                 -- Create Objects --
                 do
-                    local z = Library.zindexOrder.indicator;
+                    local z = library.zindexOrder.indicator;
                     local objs = value.objects;
 
                     objs.background = utility:Draw('Square', {
@@ -1366,14 +1229,14 @@ do
                 }
             };
 
-            table.insert(Library.windows, window);
+            table.insert(library.windows, window);
 
             ----- Create Objects ----
             do
                 local size = data.size or newUDim2(0, 525, 0, 650);
                 local position = data.position or newUDim2(0, 250, 0, 150);
                 local objs = window.objects;
-                local z = Library.zindexOrder.window;
+                local z = library.zindexOrder.window;
 
                 objs.background = utility:Draw('Square', {
                     Size = size;
@@ -1496,7 +1359,7 @@ do
                     ZIndex = z+2;
                 })
 
-                --[[local dragging, mouseStart, objStart;
+                local dragging, mouseStart, objStart;
 
                 utility:Connection(objs.dragdetector.MouseButton1Down, function(pos)
                     dragging = true;
@@ -1516,30 +1379,7 @@ do
                             dragging = false
                         end
                     end
-                end)]]
-
-                -- New dragging 
-                local dragoutline = utility:Draw("Square", {
-                    Size = size;
-                    Position = position;
-                    Filled = false,
-                    Thickness = 1,
-                    ThemeColor = "Accent",
-                    ZIndex = z+240;
-                    Visible = false
-                })
-                local dragoutlineBorder = utility:Draw("Square", {
-                    Size = size;
-                    Position = position;
-                    Filled = false,
-                    Thickness = 1,
-                    Color = Color3.new(),
-                    ZIndex = z+239;
-                    Visible = false;
-                    Thickness = 3
-                })
-            
-                utility:Dragify(objs.dragdetector, objs.background, dragoutline, dragoutlineBorder)
+                end)
 
             end
             -------------------------
@@ -1549,7 +1389,7 @@ do
                 -- Objects
                 do
                     local objs = window.colorpicker.objects;
-                    local z = Library.zindexOrder.colorpicker;
+                    local z = library.zindexOrder.colorpicker;
 
                     objs.background = utility:Draw('Square', {
                         Visible = false;
@@ -1605,14 +1445,14 @@ do
 
                     objs.sat1 = utility:Draw('Image', {
                         Size = newUDim2(1,0,1,0);
-                        Data = Library.images.colorsat1;
+                        Data = library.images.colorsat1;
                         ZIndex = z+3;
                         Parent = objs.mainColor;
                     })
 
                     objs.sat2 = utility:Draw('Image', {
                         Size = newUDim2(1,0,1,0);
-                        Data = Library.images.colorsat2;
+                        Data = library.images.colorsat2;
                         ZIndex = z+4;
                         Parent = objs.mainColor;
                     })
@@ -1635,7 +1475,7 @@ do
                     objs.hue = utility:Draw('Image', {
                         Size = newUDim2(0,175,0,10);
                         Position = newUDim2(0,5,0,205);
-                        Data = Library.images.colorhue;
+                        Data = library.images.colorhue;
                         ZIndex = z+2;
                         Parent = objs.background;
                     })
@@ -1665,7 +1505,7 @@ do
 
                     objs.trans = utility:Draw('Image', {
                         Size = newUDim2(1,0,1,0);
-                        Data = Library.images.colortrans;
+                        Data = library.images.colortrans;
                         ZIndex = z+3;
                         Parent = objs.transColor;
                     })
@@ -1866,12 +1706,14 @@ do
                     end)
 
                     utility:Connection(mousemove, function(pos)
-                        if draggingSat then
-                            updateSatVal(pos)
-                        elseif draggingHue then
-                            updateHue(pos)
-                        elseif draggingTrans then
-                            updateTrans(pos)
+                        if library.open then
+                            if draggingSat then
+                                updateSatVal(pos)
+                            elseif draggingHue then
+                                updateHue(pos)
+                            elseif draggingTrans then
+                                updateTrans(pos)
+                            end
                         end
                     end)
 
@@ -1887,7 +1729,6 @@ do
                     if typeof(c3) ~= 'Color3' then return end
                     if typeof(a) ~= 'number' then return end
                     local h,s,v = c3:ToHSV();
-                    local r,g,b = utility:ToRGB(c3);
                     h = h == 0 and 1 or h;
                     self.color = c3;
                     self.trans = a;
@@ -1897,9 +1738,6 @@ do
                     self.objects.transSlider.Position = newUDim2(0,0,a,0);
                     self.objects.pointer.Position = newUDim2(1 - s, 0, 1 - v, 0);
                     self.objects.statusText.Text = 'Editing : Unknown';
-                    self.objects.rText.Text = string.format("%.14g", floor(r))
-                    self.objects.gText.Text = string.format("%.14g", floor(g))
-                    self.objects.bText.Text = string.format("%.14g", floor(b))
                     if self.selected ~= nil then
                         local txt = 'Editing : Unknown';
                         if self.selected.text ~= nil and self.selected.text ~= '' then
@@ -1921,7 +1759,7 @@ do
                 -- Default Objects
                 do
                     local objs = window.dropdown.objects;
-                    local z = Library.zindexOrder.dropdown;
+                    local z = library.zindexOrder.dropdown;
 
                     objs.background = utility:Draw('Square', {
                         Visible = false;
@@ -1969,7 +1807,7 @@ do
                                     Size = newUDim2(1,-4,0,18);
                                     Color = Color3.new(.25,.25,.25);
                                     Transparency = 0;
-                                    ZIndex = Library.zindexOrder.dropdown+1;
+                                    ZIndex = library.zindexOrder.dropdown+1;
                                     Parent = self.objects.background;
                                 })
                                 valueObject.text = utility:Draw('Text', {
@@ -1978,7 +1816,7 @@ do
                                     Text = tostring(value);
                                     Size = 13;
                                     Font = 2;
-                                    ZIndex = Library.zindexOrder.dropdown+2;
+                                    ZIndex = library.zindexOrder.dropdown+2;
                                     Parent = valueObject.background;
                                 })
                                 valueObject.connection = utility:Connection(valueObject.background.MouseButton1Down, function()
@@ -2054,11 +1892,11 @@ do
                     tooltipObjects.riskytext.Visible = option.risky;
                     tooltipObjects.text.Position = option.risky and newUDim2(0,60,0,0) or newUDim2(0,3,0,0)
                     tooltipObjects.text.Text = tostring(option.tooltip);
-                    Library.CurrentTooltip = option;
+                    library.CurrentTooltip = option;
                 end)
                 utility:Connection(option.objects.holder.MouseLeave, function()
-                    if Library.CurrentTooltip == option then
-                        Library.CurrentTooltip = nil;
+                    if library.CurrentTooltip == option then
+                        library.CurrentTooltip = nil;
                         tooltipObjects.background.Visible = false
                     end
                 end)
@@ -2093,7 +1931,6 @@ do
                             end)
                         end
                     end
-
                 end
             end
 
@@ -2111,7 +1948,7 @@ do
                 --- Create Objects ---
                 do
                     local objs = tab.objects;
-                    local z = Library.zindexOrder.window + 5;
+                    local z = library.zindexOrder.window + 5;
 
                     objs.background = utility:Draw('Square', {
                         Size = newUDim2(0,50,1,0);
@@ -2176,7 +2013,7 @@ do
                     --- Create Objects ---
                     do
                         local objs = section.objects;
-                        local z = Library.zindexOrder.window+15;
+                        local z = library.zindexOrder.window+15;
 
                         objs.background = utility:Draw('Square', {
                             ThemeColor = 'Section Background';
@@ -2287,7 +2124,7 @@ do
 
                         local blacklist = {'objects'};
                         for i,v in next, data do
-                            if not table.find(blacklist, i) then
+                            if not table.find(blacklist, i) ~= toggle[i] ~= nil then
                                 toggle[i] = v
                             end
                         end
@@ -2295,14 +2132,14 @@ do
                         table.insert(self.options, toggle)
 
                         if toggle.flag then
-                            Library.flags[toggle.flag] = toggle.state;
-                            Library.options[toggle.flag] = toggle;
+                            library.flags[toggle.flag] = toggle.state;
+                            library.options[toggle.flag] = toggle;
                         end
 
                         --- Create Objects ---
                         do
                             local objs = toggle.objects;
-                            local z = Library.zindexOrder.window+25;
+                            local z = library.zindexOrder.window+25;
 
                             objs.holder = utility:Draw('Square', {
                                 Size = newUDim2(1,0,0,17);
@@ -2321,7 +2158,7 @@ do
 
                             objs.gradient = utility:Draw('Image', {
                                 Size = newUDim2(1,0,1,0);
-                                Data = Library.images.gradientp45;
+                                Data = library.images.gradientp45;
                                 Transparency = .25;
                                 ZIndex = z+4;
                                 Parent = objs.background;
@@ -2372,7 +2209,7 @@ do
                             if typeof(bool) == 'boolean' then
                                 self.state = bool;
                                 if self.flag then
-                                    Library.flags[self.flag] = bool;
+                                    library.flags[self.flag] = bool;
                                 end
 
                                 self.objects.border1.ThemeColor = bool and 'Accent' or (self.objects.holder.Hover and 'Accent' or 'Option Border 1');
@@ -2399,13 +2236,13 @@ do
                                 return a.order < b.order
                             end)
 
-                            local x, y = 0, 0 -- SORTING, COLOR PICKER
+                            local x, y = 0, 0
                             for i,option in next, self.options do
-                                option.objects.holder.Visible = option.enabled;
+                                option.objects.holder.Visible = option.enabled
                                 if option.enabled then
                                     if option.class == 'color' or option.class == 'bind' then
                                         option.objects.holder.Position = newUDim2(1,-option.objects.holder.Object.Size.X-x,0,0);
-                                        x = x + option.objects.holder.Object.Size.X + 18;
+                                        x = x + option.objects.holder.Object.Size.X;
                                     elseif option.class == 'slider' or option.class == 'list' then
                                         option.objects.holder.Position = newUDim2(0,0,1,-option.objects.holder.Object.Size.Y-y);
                                         y = y + option.objects.holder.Object.Size.Y;
@@ -2427,7 +2264,7 @@ do
                                 tooltip = '';
                                 order = #self.options+1;
                                 callback = function() end;
-                                color = Color3.new(1,.995,.995);
+                                color = Color3.new(1,1,1);
                                 trans = 0;
                                 open = false;
                                 enabled = true;
@@ -2436,7 +2273,7 @@ do
         
                             local blacklist = {'objects'};
                             for i,v in next, data do
-                                if not table.find(blacklist, i) then
+                                if not table.find(blacklist, i) and color[i] ~= nil then
                                     color[i] = v
                                 end
                             end
@@ -2444,47 +2281,47 @@ do
                             table.insert(self.options, color)
         
                             if color.flag then
-                                Library.flags[color.flag] = color.color;
-                                Library.options[color.flag] = color;
+                                library.flags[color.flag] = color.color;
+                                library.options[color.flag] = color;
                             end
         
                             --- Create Objects ---
                             do
                                 local objs = color.objects;
-                                local z = Library.zindexOrder.window+25;
+                                local z = library.zindexOrder.window+25;
         
                                 objs.holder = utility:Draw('Square', {
-                                    Size = newUDim2(0,31,0,17);
+                                    Size = newUDim2(0,21,0,17);
                                     Transparency = 0;
                                     ZIndex = z+6;
                                     Parent = self.objects.holder;
                                 })
         
                                 objs.background = utility:Draw('Square', {
-                                    Size = newUDim2(0,-35,0,10);
-                                    Position = newUDim2(0,19,0,3);
+                                    Size = newUDim2(0,15,0,8);
+                                    Position = newUDim2(0,4,0,5);
                                     ZIndex = z+3;
                                     Parent = objs.holder;
                                 })
         
                                 objs.gradient = utility:Draw('Image', {
                                     Size = newUDim2(1,0,1,0);
-                                    Data = Library.images.gradientp90;
+                                    Data = library.images.gradientp45;
                                     Transparency = .25;
                                     ZIndex = z+4;
                                     Parent = objs.background;
                                 })
         
                                 objs.border1 = utility:Draw('Square', {
-                                    Size = newUDim2(1,-2,1,2);
-                                    Position = newUDim2(0,1,0,-1);
+                                    Size = newUDim2(1,2,1,2);
+                                    Position = newUDim2(0,-1,0,-1);
                                     ThemeColor = 'Option Border 1';
                                     ZIndex = z+2;
                                     Parent = objs.background;
                                 })
         
                                 objs.border2 = utility:Draw('Square', {
-                                    Size = newUDim2(0,0,0,0);
+                                    Size = newUDim2(1,2,1,2);
                                     Position = newUDim2(0,-1,0,-1);
                                     ThemeColor = 'Option Border 2';
                                     ZIndex = z+1;
@@ -2519,7 +2356,7 @@ do
                                         window.colorpicker:Visualize(self.color, self.trans);
                                     end
                                     if self.flag then
-                                        Library.flags[self.flag] = c3;
+                                        library.flags[self.flag] = c3;
                                     end
                                 end
                             end
@@ -2573,7 +2410,7 @@ do
                                 order = #self.options+1;
                                 callback = function() end;
                                 keycallback = function() end;
-                                indicatorValue = Library.keyIndicator:AddValue({value = 'value', key = 'key', enabled = false});
+                                indicatorValue = library.keyIndicator:AddValue({value = 'value', key = 'key', enabled = false});
                                 noindicator = false;
                                 invertindicator = false;
                                 state = false;
@@ -2585,7 +2422,7 @@ do
         
                             local blacklist = {'objects'};
                             for i,v in next, data do
-                                if not table.find(blacklist, i) then
+                                if not table.find(blacklist, i) and bind[i] ~= nil then
                                     bind[i] = v
                                 end
                             end
@@ -2593,13 +2430,25 @@ do
                             table.insert(self.options, bind)
         
                             if bind.flag then
-                                Library.options[bind.flag] = bind;
+                                library.options[bind.flag] = bind;
+                            end
+
+                            if bind.bind == 'none' then
+                                bind.state = true
+                                if bind.flag then
+                                    library.flags[bind.flag] = bind.state;
+                                end
+                                bind.callback(true)
+                                local display = bind.state; if bind.invertindicator then display = not bind.state; end
+                                bind.indicatorValue:SetEnabled(display and not bind.noindicator);
+                                bind.indicatorValue:SetKey((bind.text == nil or bind.text == '') and (bind.flag == nil and 'unknown' or bind.flag) or bind.text); -- this is so dumb
+                                bind.indicatorValue:SetValue('[Always]');
                             end
         
                             --- Create Objects ---
                             do
                                 local objs = bind.objects;
-                                local z = Library.zindexOrder.window+25;
+                                local z = library.zindexOrder.window+25;
         
                                 objs.holder = utility:Draw('Square', {
                                     Size = newUDim2(0,0,0,17);
@@ -2635,12 +2484,11 @@ do
                             ----------------------
         
                             local c
-        
                             function bind:SetBind(keybind)
                                 if c then
                                     c:Disconnect();
                                     if bind.flag then
-                                        Library.flags[bind.flag] = false;
+                                        library.flags[bind.flag] = false;
                                     end
                                     bind.callback(false);
                                 end
@@ -2648,13 +2496,32 @@ do
                                 self.bind = (keybind and keybind) or keybind or self.bind
                                 if self.bind == Enum.KeyCode.Backspace then
                                     self.bind = 'none';
+                                    bind.state = true
+                                    if bind.flag then
+                                        library.flags[bind.flag] = bind.state;
+                                    end
+                                    self.callback(true)
+                                    local display = bind.state; if bind.invertindicator then display = not bind.state; end
+                                    bind.indicatorValue:SetEnabled(display and not bind.noindicator);
                                 else
                                     keyName = keyNames[keybind] or keybind.Name or keybind
+                                end
+                                if self.bind ~= 'none' then
+                                    bind.state = false
+                                    if bind.flag then
+                                        library.flags[bind.flag] = bind.state;
+                                    end
+                                    self.callback(false)
+                                    local display = bind.state; if bind.invertindicator then display = not bind.state; end
+                                    bind.indicatorValue:SetEnabled(display and not bind.noindicator);
                                 end
                                 self.keycallback(self.bind);
                                 self:SetKeyText(keyName:upper());
                                 self.indicatorValue:SetKey((self.text == nil or self.text == '') and (self.flag == nil and 'unknown' or self.flag) or self.text); -- this is so dumb
                                 self.indicatorValue:SetValue('['..keyName:upper()..']');
+                                if self.bind == 'none' then
+                                    self.indicatorValue:SetValue('[Always]');
+                                end
                                 self.objects.keyText.ThemeColor = self.objects.holder.Hover and 'Accent' or 'Option Text 3';
                             end
         
@@ -2665,41 +2532,6 @@ do
                                 self.objects.holder.Size = newUDim2(0,self.objects.keyText.TextBounds.X+2,0,17)
                                 toggle:UpdateOptions();
                             end
-
-                            function bind:Toggle()
-                                if bind.mode == 'toggle' then
-                                    bind.state = not bind.state
-                                    if bind.flag then
-                                        Library.flags[bind.flag] = bind.state;
-                                    end
-                                    bind.callback(bind.state)
-                                    local display = bind.state; if bind.invertindicator then display = not bind.state; end
-                                    bind.indicatorValue:SetEnabled(display and not bind.noindicator);
-                                elseif bind.mode == 'hold' then
-                                    if bind.flag then
-                                        Library.flags[bind.flag] = true;
-                                    end
-                                    bind.indicatorValue:SetEnabled((not bind.invertindicator and true or false) and not bind.noindicator);
-                                    c = utility:Connection(runservice.RenderStepped, function()
-                                        if bind.callback then
-                                            bind.callback(true);
-                                        end
-                                    end)
-                                end
-                            end
-        
-                            function bind:DisableHold()
-                                if c then
-                                    c:Disconnect();
-                                    if bind.flag then
-                                        Library.flags[bind.flag] = false;
-                                    end
-                                    if bind.callback then
-                                        bind.callback(false);
-                                    end
-                                    bind.indicatorValue:SetEnabled(bind.invertindicator and true or false);
-                                end
-                            end
         
                             utility:Connection(inputservice.InputBegan, function(inp)
                                 if inputservice:GetFocusedTextBox() then
@@ -2708,15 +2540,47 @@ do
                                     local key = (table.find({Enum.UserInputType.MouseButton1, Enum.UserInputType.MouseButton2, Enum.UserInputType.MouseButton3}, inp.UserInputType) and not bind.nomouse) and inp.UserInputType
                                     bind:SetBind(key or (not table.find(blacklistedKeys, inp.KeyCode)) and inp.KeyCode)
                                     bind.binding = false
+                                elseif not bind.binding and self.bind == 'none' then
+                                    bind.state = true
+                                    library.flags[bind.flag] = bind.state
+                                    local display = bind.state; if bind.invertindicator then display = not bind.state; end
+                                    bind.indicatorValue:SetEnabled(display and not bind.noindicator)
                                 elseif (inp.KeyCode == bind.bind or inp.UserInputType == bind.bind) and not bind.binding then
-                                    bind:Toggle()
+                                    if bind.mode == 'toggle' then
+                                        bind.state = not bind.state
+                                        if bind.flag then
+                                            library.flags[bind.flag] = bind.state;
+                                        end
+                                        bind.callback(bind.state)
+                                        local display = bind.state; if bind.invertindicator then display = not bind.state; end
+                                        bind.indicatorValue:SetEnabled(display and not bind.noindicator);
+                                    elseif bind.mode == 'hold' then
+                                        if bind.flag then
+                                            library.flags[bind.flag] = true;
+                                        end
+                                        bind.indicatorValue:SetEnabled((not bind.invertindicator and true or false) and not bind.noindicator);
+                                        c = utility:Connection(runservice.RenderStepped, function()
+                                            if bind.callback then
+                                                bind.callback(true);
+                                            end
+                                        end)
+                                    end
                                 end
                             end)
         
                             utility:Connection(inputservice.InputEnded, function(inp)
                                 if bind.bind ~= 'none' then
                                     if inp.KeyCode == bind.bind or inp.UserInputType == bind.bind then
-                                        bind:DisableHold()
+                                        if c then
+                                            c:Disconnect();
+                                            if bind.flag then
+                                                library.flags[bind.flag] = false;
+                                            end
+                                            if bind.callback then
+                                                bind.callback(false);
+                                            end
+                                            bind.indicatorValue:SetEnabled(bind.invertindicator and true or false);
+                                        end
                                     end
                                 end
                             end)
@@ -2747,7 +2611,7 @@ do
         
                             local blacklist = {'objects', 'dragging'};
                             for i,v in next, data do
-                                if not table.find(blacklist, i) then
+                                if not table.find(blacklist, i) and (slider[i] ~= nil and typeof(slider[i]) == typeof(v)) then
                                     slider[i] = v;
                                 end
                             end
@@ -2755,14 +2619,14 @@ do
                             table.insert(self.options, slider)
 
                             if slider.flag then
-                                Library.flags[slider.flag] = slider.value;
-                                Library.options[slider.flag] = slider;
+                                library.flags[slider.flag] = slider.value;
+                                library.options[slider.flag] = slider;
                             end
 
                             --- Create Objects ---
                             do
                                 local objs = slider.objects;
-                                local z = Library.zindexOrder.window+25;
+                                local z = library.zindexOrder.window+25;
 
                                 objs.holder = utility:Draw('Square', {
                                     Size = newUDim2(1,0,0,20);
@@ -2804,7 +2668,7 @@ do
         
                                 objs.gradient = utility:Draw('Image', {
                                     Size = newUDim2(1,0,1,0);
-                                    Data = Library.images.gradientp90;
+                                    Data = library.images.gradientp90;
                                     Transparency = .65;
                                     ZIndex = z+4;
                                     Parent = objs.background;
@@ -2841,8 +2705,8 @@ do
                                             slider.focused = true;
                                             inputNumber = '';
                                             c = utility:Connection(inputservice.InputBegan, function(inp)
-                                                if Library.numberStrings[inp.KeyCode.Name] then
-                                                    local number = Library.numberStrings[inp.KeyCode.Name];
+                                                if library.numberStrings[inp.KeyCode.Name] then
+                                                    local number = library.numberStrings[inp.KeyCode.Name];
                                                     inputNumber = inputNumber..tostring(number);
                                                     objs.text.Text = string.format("%.14g", slider.value) .. tostring(slider.suffix) .. "/" .. slider.max .. tostring(slider.suffix) .. " [" .. inputNumber .. "]";
                                                 elseif inp.KeyCode == Enum.KeyCode.Backspace then
@@ -2861,14 +2725,14 @@ do
                                         end
                                     else
                                         slider.dragging = true;
-                                        Library.draggingSlider = slider;
+                                        library.draggingSlider = slider;
                                     end
                                 end)
         
                                 utility:Connection(button1up, function()
                                     objs.border1.ThemeColor = objs.holder.Hover and 'Accent' or 'Option Border 1';
                                     slider.dragging = false;
-                                    Library.draggingSlider = nil;
+                                    library.draggingSlider = nil;
                                 end)
         
                             end
@@ -2889,15 +2753,9 @@ do
                                     utility:Tween(self.objects.slider, 'Size', size, .05, Enum.EasingDirection.Out, Enum.EasingStyle.Quad);
                                     utility:Tween(self.objects.slider, 'Position', pos, .05, Enum.EasingDirection.Out, Enum.EasingStyle.Quad);
         
-                                    local valueText = (
-                                        (newValue == self.min and self.mintext ~= nil) and self.mintext or
-                                        (newValue == self.max and self.maxtext ~= nil) and self.maxtext or
-                                        string.format("%.14g",newValue)
-                                    )
-
                                     self.value = newValue;
-                                    Library.flags[self.flag] = newValue;
-                                    self.objects.text.Text = valueText..tostring(self.suffix)..'/'..self.max..tostring(self.suffix);
+                                    library.flags[self.flag] = newValue;
+                                    self.objects.text.Text = string.format("%.14g",newValue)..tostring(self.suffix)..'/'..self.max..tostring(self.suffix);
                                     self.objects.text.ThemeColor = (self.min < 0 and newValue == 0 or newValue == self.min)  and (self.risky and 'Risky Text' or 'Option Text 3') or (self.risky and 'Risky Text Enabled' or 'Option Text 1');
         
                                     if not nocallback then
@@ -2933,20 +2791,20 @@ do
         
                             local blacklist = {'objects'};
                             for i,v in next, data do
-                                if not table.find(blacklist, i) then
+                                if not table.find(blacklist, i) ~= list[i] ~= nil then
                                     list[i] = v
                                 end
                             end
         
                             if list.flag then
-                                Library.flags[list.flag] = list.selected;
-                                Library.options[list.flag] = list;
+                                library.flags[list.flag] = list.selected;
+                                library.options[list.flag] = list;
                             end
         
                             -- Create Objects --
                             do
                                 local objs = list.objects;
-                                local z = Library.zindexOrder.window+25;
+                                local z = library.zindexOrder.window+25;
         
                                 objs.holder = utility:Draw('Square', {
                                     Size = newUDim2(1,0,0,22);
@@ -2981,7 +2839,7 @@ do
         
                                 objs.gradient = utility:Draw('Image', {
                                     Size = newUDim2(1,0,1,0);
-                                    Data = Library.images.gradientp90;
+                                    Data = library.images.gradientp90;
                                     Transparency = .65;
                                     ZIndex = z+4;
                                     Parent = objs.background;
@@ -3060,7 +2918,7 @@ do
                                         end
                                     end
                                     if self.flag then
-                                        Library.flags[self.flag] = self.selected
+                                        library.flags[self.flag] = self.selected
                                     end
                                     if not nocallback then
                                         self.callback(self.selected);
@@ -3097,10 +2955,6 @@ do
                             return list
                         end
 
-                        if toggle.default ~= nil then
-                            toggle.state = toggle.default;
-                        end
-
                         tooltip(toggle);
                         toggle:SetText(toggle.text);
                         toggle:SetState(toggle.state, true);
@@ -3131,7 +2985,7 @@ do
 
                         local blacklist = {'objects', 'dragging'};
                         for i,v in next, data do
-                            if not table.find(blacklist, i) then
+                            if not table.find(blacklist, i) and (slider[i] ~= nil and typeof(slider[i]) == typeof(v)) then
                                 slider[i] = v;
                             end
                         end
@@ -3139,14 +2993,14 @@ do
                         table.insert(self.options, slider)
 
                         if slider.flag then
-                            Library.flags[slider.flag] = slider.value;
-                            Library.options[slider.flag] = slider;
+                            library.flags[slider.flag] = slider.value;
+                            library.options[slider.flag] = slider;
                         end
 
                         --- Create Objects ---
                         do
                             local objs = slider.objects;
-                            local z = Library.zindexOrder.window+25;
+                            local z = library.zindexOrder.window+25;
 
                             objs.holder = utility:Draw('Square', {
                                 Size = newUDim2(1,0,0,32);
@@ -3188,7 +3042,7 @@ do
 
                             objs.gradient = utility:Draw('Image', {
                                 Size = newUDim2(1,0,1,0);
-                                Data = Library.images.gradientp90;
+                                Data = library.images.gradientp90;
                                 Transparency = .65;
                                 ZIndex = z+4;
                                 Parent = objs.background;
@@ -3273,8 +3127,8 @@ do
                                         slider.focused = true;
                                         inputNumber = '';
                                         c = utility:Connection(inputservice.InputBegan, function(inp)
-                                            if Library.numberStrings[inp.KeyCode.Name] then
-                                                local number = Library.numberStrings[inp.KeyCode.Name];
+                                            if library.numberStrings[inp.KeyCode.Name] then
+                                                local number = library.numberStrings[inp.KeyCode.Name];
                                                 inputNumber = inputNumber..tostring(number);
                                                 objs.text.Text = slider.text..': '..string.format("%.14g",slider.value)..tostring(slider.suffix)..' ['..inputNumber..']';
                                             elseif inp.KeyCode == Enum.KeyCode.Backspace then
@@ -3296,14 +3150,14 @@ do
 
                                 else
                                     slider.dragging = true;
-                                    Library.draggingSlider = slider;
+                                    library.draggingSlider = slider;
                                 end
                             end)
 
                             utility:Connection(button1up, function()
                                 objs.border1.ThemeColor = objs.holder.Hover and 'Accent' or 'Option Border 1';
                                 slider.dragging = false;
-                                Library.draggingSlider = nil;
+                                library.draggingSlider = nil;
                             end)
 
                         end
@@ -3324,15 +3178,9 @@ do
                                 utility:Tween(self.objects.slider, 'Size', size, .05, Enum.EasingDirection.Out, Enum.EasingStyle.Quad);
                                 utility:Tween(self.objects.slider, 'Position', pos, .05, Enum.EasingDirection.Out, Enum.EasingStyle.Quad);
 
-                                local valueText = (
-                                    (newValue == self.min and self.mintext ~= nil) and self.mintext or
-                                    (newValue == self.max and self.maxtext ~= nil) and self.maxtext or
-                                    string.format("%.14g",newValue)
-                                )
-
                                 self.value = newValue;
-                                Library.flags[self.flag] = newValue;
-                                self.objects.text.Text = slider.text..': '..valueText..tostring(self.suffix);
+                                library.flags[self.flag] = newValue;
+                                self.objects.text.Text = slider.text..': '..string.format("%.14g",newValue)..tostring(self.suffix);
                                 self.objects.text.ThemeColor = (self.min < 0 and newValue == 0 or newValue == self.min)  and (self.risky and 'Risky Text' or 'Option Text 3') or (self.risky and 'Risky Text Enabled' or 'Option Text 1');
 
                                 if not nocallback then
@@ -3347,10 +3195,6 @@ do
                                 self.text = str;
                                 self.objects.text.Text = str..': '..tostring(self.value)..tostring(self.suffix);
                             end
-                        end
-
-                        if slider.default ~= nil then
-                            slider.value = slider.default
                         end
 
                         tooltip(slider);
@@ -3379,7 +3223,7 @@ do
 
                         local blacklist = {'objects'};
                         for i,v in next, data do
-                            if not table.find(blacklist, i) then
+                            if not table.find(blacklist, i) and button[i] ~= nil then
                                 button[i] = v;
                             end
                         end
@@ -3387,13 +3231,13 @@ do
                         table.insert(self.options, button)
 
                         if button.flag then
-                            Library.options[button.flag] = button;
+                            library.options[button.flag] = button;
                         end
 
                         --- Create Objects ---
                         do
                             local objs = button.objects;
-                            local z = Library.zindexOrder.window+25;
+                            local z = library.zindexOrder.window+25;
 
                             objs.holder = utility:Draw('Square', {
                                 Size = newUDim2(1,0,0,22);
@@ -3428,7 +3272,7 @@ do
 
                             objs.gradient = utility:Draw('Image', {
                                 Size = newUDim2(1,0,1,0);
-                                Data = Library.images.gradientp90;
+                                Data = library.images.gradientp90;
                                 Transparency = .65;
                                 ZIndex = z+3;
                                 Parent = objs.background;
@@ -3514,7 +3358,7 @@ do
         
                             local blacklist = {'objects'};
                             for i,v in next, data do
-                                if not table.find(blacklist, i) then
+                                if not table.find(blacklist, i) and button[i] ~= nil then
                                     button[i] = v;
                                 end
                             end
@@ -3522,13 +3366,13 @@ do
                             table.insert(self.subbuttons, button)
         
                             if button.flag then
-                                Library.options[button.flag] = button;
+                                library.options[button.flag] = button;
                             end
         
                             --- Create Objects ---
                             do
                                 local objs = button.objects;
-                                local z = Library.zindexOrder.window+25;
+                                local z = library.zindexOrder.window+25;
         
                                 objs.holder = utility:Draw('Square', {
                                     Size = newUDim2(1,0,1,0);
@@ -3563,7 +3407,7 @@ do
         
                                 objs.gradient = utility:Draw('Image', {
                                     Size = newUDim2(1,0,1,0);
-                                    Data = Library.images.gradientp90;
+                                    Data = library.images.gradientp90;
                                     Transparency = .65;
                                     ZIndex = z+3;
                                     Parent = objs.background;
@@ -3684,21 +3528,17 @@ do
 
                         local blacklist = {'objects', 'dragging'};
                         for i,v in next, data do
-                            if not table.find(blacklist, i) then
+                            if not table.find(blacklist, i) and (separator[i] ~= nil and typeof(separator[i]) == typeof(v)) then
                                 separator[i] = v;
                             end
                         end
             
                         table.insert(self.options, separator)
 
-                        if separator.flag then
-                            Library.options[separator.flag] = separator;
-                        end
-
                         --- Create Objects ---
                         do
                             local objs = separator.objects;
-                            local z = Library.zindexOrder.window+25;
+                            local z = library.zindexOrder.window+25;
 
                             objs.holder = utility:Draw('Square', {
                                 Size = newUDim2(1,0,0,18);
@@ -3777,7 +3617,7 @@ do
                             tooltip = '';
                             order = #self.options+1;
                             callback = function() end;
-                            color = Color3.new(1,.995,.995);
+                            color = Color3.new(1,1,1);
                             trans = 0;
                             open = false;
                             enabled = true;
@@ -3787,7 +3627,7 @@ do
 
                         local blacklist = {'objects'};
                         for i,v in next, data do
-                            if not table.find(blacklist, i) then
+                            if not table.find(blacklist, i) and color[i] ~= nil then
                                 color[i] = v
                             end
                         end
@@ -3795,14 +3635,14 @@ do
                         table.insert(self.options, color)
 
                         if color.flag then
-                            Library.flags[color.flag] = color.color;
-                            Library.options[color.flag] = color;
+                            library.flags[color.flag] = color.color;
+                            library.options[color.flag] = color;
                         end
 
                         --- Create Objects ---
                         do
                             local objs = color.objects;
-                            local z = Library.zindexOrder.window+25;
+                            local z = library.zindexOrder.window+25;
 
                             objs.holder = utility:Draw('Square', {
                                 Size = newUDim2(1,0,0,19);
@@ -3812,30 +3652,30 @@ do
                             })
 
                             objs.background = utility:Draw('Square', {
-                                Size = newUDim2(0,-35,0,10);
-                                Position = newUDim2(1,-1,0,5);
+                                Size = newUDim2(0,15,0,8);
+                                Position = newUDim2(1,-16,0,5);
                                 ZIndex = z+3;
                                 Parent = objs.holder;
                             })
 
                             objs.gradient = utility:Draw('Image', {
                                 Size = newUDim2(1,0,1,0);
-                                Data = Library.images.gradientp90;
+                                Data = library.images.gradientp45;
                                 Transparency = .25;
                                 ZIndex = z+4;
                                 Parent = objs.background;
                             })
 
                             objs.border1 = utility:Draw('Square', {
-                                Size = newUDim2(1,-2,1,2);
-                                Position = newUDim2(0,1,0,-1);
+                                Size = newUDim2(1,2,1,2);
+                                Position = newUDim2(0,-1,0,-1);
                                 ThemeColor = 'Option Border 1';
                                 ZIndex = z+2;
                                 Parent = objs.background;
                             })
 
                             objs.border2 = utility:Draw('Square', {
-                                Size = newUDim2(0,0,0,0);
+                                Size = newUDim2(1,2,1,2);
                                 Position = newUDim2(0,-1,0,-1);
                                 ThemeColor = 'Option Border 2';
                                 ZIndex = z+1;
@@ -3886,7 +3726,7 @@ do
                                     window.colorpicker:Visualize(self.color, self.trans);
                                 end
                                 if self.flag then
-                                    Library.flags[self.flag] = c3;
+                                    library.flags[self.flag] = c3;
                                 end
                             end
                         end
@@ -3947,7 +3787,7 @@ do
 
                         local blacklist = {'objects', 'dragging'};
                         for i,v in next, data do
-                            if not table.find(blacklist, i) then
+                            if not table.find(blacklist, i) and box[i] ~= nil then
                                 box[i] = v;
                             end
                         end
@@ -3955,14 +3795,14 @@ do
                         table.insert(self.options, box)
 
                         if box.flag then
-                            Library.flags[box.flag] = box.input;
-                            Library.options[box.flag] = box;
+                            library.flags[box.flag] = box.input;
+                            library.options[box.flag] = box;
                         end
 
                         --- Create Objects ---
                         do
                             local objs = box.objects;
-                            local z = Library.zindexOrder.window+25;
+                            local z = library.zindexOrder.window+25;
 
                             objs.holder = utility:Draw('Square', {
                                 Size = newUDim2(1,0,0,37);
@@ -3997,7 +3837,7 @@ do
 
                             objs.gradient = utility:Draw('Image', {
                                 Size = newUDim2(1,0,1,0);
-                                Data = Library.images.gradientp90;
+                                Data = library.images.gradientp90;
                                 Transparency = .65;
                                 ZIndex = z+4;
                                 Parent = objs.background;
@@ -4034,7 +3874,16 @@ do
                             utility:Connection(objs.holder.MouseButton1Down, function()
                                 if box.focused then
                                     box:ReleaseFocus();
+                                    actionservice:UnbindAction('FreezeMovement');
                                 else
+                                    actionservice:BindAction(
+                                        'FreezeMovement',
+                                        function()
+                                            return Enum.ContextActionResult.Sink
+                                        end,
+                                        false,
+                                        unpack(Enum.PlayerActions:GetEnumItems())
+                                    )
                                     box:CaptureFocus(inputservice:IsKeyDown(Enum.KeyCode.LeftControl));
                                     if inputservice:IsKeyDown(Enum.KeyCode.LeftControl) then
                                         objs.inputText.Text = '';
@@ -4060,7 +3909,7 @@ do
                                     self.callback(str);
                                 end
                                 if self.flag then
-                                    Library.flags[self.flag] = str;
+                                    library.flags[self.flag] = str;
                                 end
                             end
                         end
@@ -4069,15 +3918,6 @@ do
                         local input = box.input;
                         function box:CaptureFocus(clear)
                             box.focused = true
-
-                            actionservice:BindAction(
-                                'FreezeMovement',
-                                function()
-                                    return Enum.ContextActionResult.Sink
-                                end,
-                                false,
-                                unpack(Enum.PlayerActions:GetEnumItems())
-                            )
 
                             if clear then
                                 input = '';
@@ -4094,11 +3934,40 @@ do
                                 elseif inp.KeyCode == Enum.KeyCode.Backspace then
                                     input = input:sub(1,-2);
                                     self.objects.inputText.Text = input;
-                                elseif #inp.KeyCode.Name == 1 or table.find(whitelistedBoxKeys, inp.KeyCode) or inp.KeyCode.Name ==  'Space' then
+                                elseif #inp.KeyCode.Name == 1 or table.find(whitelistedBoxKeys, inp.KeyCode) or inp.KeyCode.Name == 'Space' or inp.KeyCode.Name == 'Minus' or inp.KeyCode.Name == 'Equals' or inp.KeyCode.Name == 'Backquote' then
                                     local wlIdx = table.find(whitelistedBoxKeys, inp.KeyCode)
-                                    local keyString = inp.KeyCode.Name == 'Space' and ' ' or wlIdx ~= nil and tostring(wlIdx-1) or inp.KeyCode.Name
-                                    if not (inputservice:IsKeyDown(Enum.KeyCode.LeftShift) or inputservice:IsKeyDown(Enum.KeyCode.RightShift)) then
+                                    local keyString = inp.KeyCode.Name == 'Space' and ' ' or inp.KeyCode.Name == 'Minus' and '_' or inp.KeyCode.Name == 'Equals' and '+' or inp.KeyCode.Name == 'Backquote' and '~' or wlIdx ~= nil and tostring(wlIdx-1) or inp.KeyCode.Name
+                                    if not (inputservice:IsKeyDown(Enum.KeyCode.LeftShift) and not inputservice:IsKeyDown(Enum.KeyCode.RightShift)) then
                                         keyString = keyString:lower();
+                                        if inp.KeyCode.Name == 'Minus' then
+                                            keyString = '-'
+                                        elseif inp.KeyCode.Name == 'Equals' then
+                                            keyString = '='
+                                        elseif inp.KeyCode.Name == 'Backquote' then
+                                            keyString = '`'
+                                        end
+                                    else
+                                        if keyString == '1' then
+                                            keyString = '!'
+                                        elseif keyString == '2' then
+                                            keyString = '@'
+                                        elseif keyString == '3' then
+                                            keyString = '#'
+                                        elseif keyString == '4' then
+                                            keyString = '$'
+                                        elseif keyString == '5' then
+                                            keyString = '%'
+                                        elseif keyString == '6' then
+                                            keyString = '^'
+                                        elseif keyString == '7' then
+                                            keyString = '&'
+                                        elseif keyString == '8' then
+                                            keyString = '*'
+                                        elseif keyString == '9' then
+                                            keyString = '('
+                                        elseif keyString == '0' then
+                                            keyString = ')'
+                                        end
                                     end
                                     input = input..keyString;
                                     self.objects.inputText.Text = input;
@@ -4110,9 +3979,6 @@ do
                         function box:ReleaseFocus(apply)
                             box.focused = false;
                             self.objects.inputText.ThemeColor = 'Option Text 2';
-                            if not (Library.open and Library.flags.disablemenumovement) then
-                                actionservice:UnbindAction('FreezeMovement');
-                            end
                             if apply then
                                 box:SetInput(input);
                             end
@@ -4138,7 +4004,7 @@ do
                             order = #self.options+1;
                             callback = function() end;
                             keycallback = function() end;
-                            indicatorValue = Library.keyIndicator:AddValue({value = 'value', key = 'key', enabled = false});
+                            indicatorValue = library.keyIndicator:AddValue({value = 'value', key = 'key', enabled = false});
                             noindicator = false;
                             state = false;
                             nomouse = false;
@@ -4150,7 +4016,7 @@ do
 
                         local blacklist = {'objects'};
                         for i,v in next, data do
-                            if not table.find(blacklist, i) then
+                            if not table.find(blacklist, i) and bind[i] ~= nil then
                                 bind[i] = v
                             end
                         end
@@ -4158,13 +4024,13 @@ do
                         table.insert(self.options, bind)
 
                         if bind.flag then
-                            Library.options[bind.flag] = bind;
+                            library.options[bind.flag] = bind;
                         end
 
                         --- Create Objects ---
                         do
                             local objs = bind.objects;
-                            local z = Library.zindexOrder.window+25;
+                            local z = library.zindexOrder.window+25;
 
                             objs.holder = utility:Draw('Square', {
                                 Size = newUDim2(1,0,0,19);
@@ -4223,7 +4089,7 @@ do
                             if c then
                                 c:Disconnect();
                                 if bind.flag then
-                                    Library.flags[bind.flag] = false;
+                                    library.flags[bind.flag] = false;
                                 end
                                 bind.callback(false);
                             end
@@ -4247,41 +4113,6 @@ do
                             self.objects.keyText.Position = newUDim2(1,-self.objects.keyText.TextBounds.X, 0, 2);
                         end
 
-                        function bind:Toggle()
-                            if bind.mode == 'toggle' then
-                                bind.state = not bind.state
-                                if bind.flag then
-                                    Library.flags[bind.flag] = bind.state;
-                                end
-                                bind.callback(bind.state)
-                                local display = bind.state; if bind.invertindicator then display = not bind.state; end
-                                bind.indicatorValue:SetEnabled(display and not bind.noindicator);
-                            elseif bind.mode == 'hold' then
-                                if bind.flag then
-                                    Library.flags[bind.flag] = true;
-                                end
-                                bind.indicatorValue:SetEnabled((not bind.invertindicator and true or false) and not bind.noindicator);
-                                c = utility:Connection(runservice.RenderStepped, function()
-                                    if bind.callback then
-                                        bind.callback(true);
-                                    end
-                                end)
-                            end
-                        end
-
-                        function bind:DisableHold()
-                            if c then
-                                c:Disconnect();
-                                if bind.flag then
-                                    Library.flags[bind.flag] = false;
-                                end
-                                if bind.callback then
-                                    bind.callback(false);
-                                end
-                                bind.indicatorValue:SetEnabled(bind.invertindicator and true or false);
-                            end
-                        end
-
                         utility:Connection(inputservice.InputBegan, function(inp)
                             if inputservice:GetFocusedTextBox() then
                                 return
@@ -4289,15 +4120,40 @@ do
                                 local key = (table.find({Enum.UserInputType.MouseButton1, Enum.UserInputType.MouseButton2, Enum.UserInputType.MouseButton3}, inp.UserInputType) and not bind.nomouse) and inp.UserInputType
                                 bind:SetBind(key or (not table.find(blacklistedKeys, inp.KeyCode)) and inp.KeyCode)
                                 bind.binding = false
+                            elseif not bind.binding and self.bind == 'none' then
+                                bind.state = true
+                                library.flags[bind.flag] = bind.state
                             elseif (inp.KeyCode == bind.bind or inp.UserInputType == bind.bind) and not bind.binding then
-                                bind:Toggle()
+                                if bind.mode == 'toggle' then
+                                    bind.state = not bind.state
+                                    if bind.flag then
+                                        library.flags[bind.flag] = bind.state;
+                                    end
+                                    bind.callback(bind.state)
+                                    bind.indicatorValue:SetEnabled(bind.state and not bind.noindicator);
+                                elseif bind.mode == 'hold' then
+                                    if bind.flag then
+                                        library.flags[bind.flag] = true;
+                                    end
+                                    bind.indicatorValue:SetEnabled(true and not bind.noindicator);
+                                    c = utility:Connection(runservice.RenderStepped, function()
+                                        bind.callback(true);
+                                    end)
+                                end
                             end
                         end)
 
                         utility:Connection(inputservice.InputEnded, function(inp)
                             if bind.bind ~= 'none' then
-                                if inp.KeyCode == bind.bind or inp.UserInputType == bind.bind then
-                                    bind:DisableHold()
+                                if inp.KeyCode == bind.bind or inp.UserInputType == bind.key then
+                                    if c then
+                                        c:Disconnect();
+                                        if bind.flag then
+                                            library.flags[bind.flag] = false;
+                                        end
+                                        bind.callback(false);
+                                        bind.indicatorValue:SetEnabled(false);
+                                    end
                                 end
                             end
                         end)
@@ -4331,20 +4187,20 @@ do
 
                         local blacklist = {'objects'};
                         for i,v in next, data do
-                            if not table.find(blacklist, i) then
+                            if not table.find(blacklist, i) ~= list[i] ~= nil then
                                 list[i] = v
                             end
                         end
 
                         if list.flag then
-                            Library.flags[list.flag] = list.selected;
-                            Library.options[list.flag] = list;
+                            library.flags[list.flag] = list.selected;
+                            library.options[list.flag] = list;
                         end
 
                         -- Create Objects --
                         do
                             local objs = list.objects;
-                            local z = Library.zindexOrder.window+25;
+                            local z = library.zindexOrder.window+25;
 
                             objs.holder = utility:Draw('Square', {
                                 Size = newUDim2(1,0,0,40);
@@ -4379,7 +4235,7 @@ do
 
                             objs.gradient = utility:Draw('Image', {
                                 Size = newUDim2(1,0,1,0);
-                                Data = Library.images.gradientp90;
+                                Data = library.images.gradientp90;
                                 Transparency = .65;
                                 ZIndex = z+4;
                                 Parent = objs.background;
@@ -4475,7 +4331,7 @@ do
                                     end
                                 end
                                 if self.flag then
-                                    Library.flags[self.flag] = self.selected
+                                    library.flags[self.flag] = self.selected
                                 end
                                 if not nocallback then
                                     self.callback(self.selected);
@@ -4528,13 +4384,13 @@ do
 
                         local blacklist = {'objects'};
                         for i,v in next, data do
-                            if not table.find(blacklist, i) then
+                            if not table.find(blacklist, i) and text[i] ~= nil then
                                 text[i] = v
                             end
                         end
 
                         if data.flag then
-                            Library.options[data.flag] = text;
+                            library.options[data.flag] = text;
                         end
 
                         table.insert(self.options, text)
@@ -4542,7 +4398,7 @@ do
                         --- Create Objects ---
                         do
                             local objs = text.objects;
-                            local z = Library.zindexOrder.window+25;
+                            local z = library.zindexOrder.window+25;
 
                             objs.holder = utility:Draw('Square', {
                                 Transparency = 0;
@@ -4653,15 +4509,15 @@ do
                     local objs = v.objects;
                     v.selected = v == self.selectedTab;
                     objs.background.ThemeColor = v.selected and 'Selected Tab Background' or 'Unselected Tab Background';
-                    objs.background.Size = newUDim2(0, objs.text.TextBounds.X + 50, 1, v.selected and 1 or 0);
+                    objs.background.Size = newUDim2(0, objs.text.TextBounds.X + 14, 1, v.selected and 1 or 0);
                     objs.background.Position = newUDim2(0, pos, 0, 0)
 
                     objs.text.ThemeColor = v.selected and 'Selected Tab Text' or 'Unselected Tab Text';
                     objs.text.Position = newUDim2(.5, 0, 0, 3);
 
-                    --objs.topBorder.ThemeColor = v.selected and 'Accent' or 'Unselected Tab Background';
-                    objs.topBorder.ThemeColor = v.selected and 'Selected Tab Background' or 'Unselected Tab Background';
-                    pos += objs.background.Size.X.Offset + 8
+                    objs.topBorder.ThemeColor = v.selected and 'Accent' or 'Unselected Tab Background';
+
+                    pos += objs.background.Size.X.Offset + 1
 
                     v:UpdateSections();
 
@@ -4674,7 +4530,7 @@ do
 
         -- Tooltip
         do
-            local z = Library.zindexOrder.window + 2000;
+            local z = library.zindexOrder.window + 2000;
             tooltipObjects.background = utility:Draw('Square', {
                 ThemeColor = 'Group Background';
                 ZIndex = z;
@@ -4722,12 +4578,18 @@ do
         
         -- Watermark
         do
+            if not IonHub_User then
+                getgenv().IonHub_User = {
+                    UID = 0, 
+                    User = "admin"
+                }
+            end
             self.watermark = {
                 objects = {};
                 text = {
                     {self.cheatname, true},
-                    {localplayer.Name, false},
-                    {localplayer.DisplayName, false},
+                    {("%s (uid %s)"):format(IonHub_User.User, tostring(IonHub_User.UID)), true},
+                    {self.gamename, true},
                     {'0 fps', true},
                     {'0ms', true},
                     {'00:00:00', true},
@@ -4739,16 +4601,14 @@ do
             }
 
             function self.watermark:Update()
-                self.objects.background.Visible = Library.flags.watermark_enabled
-                if Library.flags.watermark_enabled then
+                self.objects.background.Visible = library.flags.watermark_enabled
+                if library.flags.watermark_enabled then
                     local date = {os.date('%b',os.time()), os.date('%d',os.time()), os.date('%Y',os.time())}
                     local daySuffix = math.floor(date[2]%10)
                     date[2] = date[2]..(daySuffix == 1 and 'st' or daySuffix == 2 and 'nd' or daySuffix == 3 and 'rd' or 'th')
 
-                    self.text[2][1] = localplayer.Name
-                    self.text[3][1] = localplayer.DisplayName
-                    self.text[4][1] = Library.stats.fps..' fps'
-                    self.text[5][1] = floor(Library.stats.ping)..'ms'
+                    self.text[4][1] = library.stats.fps..' fps'
+                    self.text[5][1] = floor(library.stats.ping)..'ms'
                     self.text[6][1] = os.date('%X', os.time())
                     self.text[7][1] = table.concat(date, ', ')
 
@@ -4771,7 +4631,7 @@ do
                         self.lock == 'Bottom Right' and newUDim2(0, screensize.X - size.X - 15, 0, screensize.Y - size.Y - 15) or
                         self.lock == 'Bottom Left' and newUDim2(0, 15, 0, screensize.Y - size.Y - 15) or
                         self.lock == 'Top' and newUDim2(0, screensize.X / 2 - size.X / 2, 0, 15) or
-                        newUDim2(Library.flags.watermark_x / 100, 0, Library.flags.watermark_y / 100, 0)
+                        newUDim2(library.flags.watermark_x / 100, 0, library.flags.watermark_y / 100, 0)
                     )
 
                     self.objects.background.Position = self.position
@@ -4830,194 +4690,187 @@ do
 
         local lasttick = tick();
         utility:Connection(runservice.RenderStepped, function(step)
-            Library.stats.fps = floor(1/step)
-            Library.stats.ping = stats.Network.ServerStatsItem["Data Ping"]:GetValue()
-            Library.stats.sendkbps = stats.DataSendKbps
-            Library.stats.receivekbps = stats.DataReceiveKbps
+            library.stats.fps = floor(1/step)
+            library.stats.ping = stats.Network.ServerStatsItem["Data Ping"]:GetValue()
+            library.stats.sendkbps = stats.DataSendKbps
+            library.stats.receivekbps = stats.DataReceiveKbps
 
-            if (tick()-lasttick)*1000 > Library.watermark.refreshrate then
+            if (tick()-lasttick)*1000 > library.watermark.refreshrate then
                 lasttick = tick()
-                Library.watermark:Update()
+                library.watermark:Update()
             end
         end)
 
         self.keyIndicator = self.NewIndicator({title = 'Keybinds', pos = newUDim2(0,15,0,325), enabled = false});
-        self:SetTheme(Library.themes[1].theme);
+        self.targetIndicator = self.NewIndicator({title = 'Target Info', pos = newUDim2(0,15,0,350), enabled = false});
+        self.targetName = self.targetIndicator:AddValue({key = 'Target:', value = 'nil'})
+        self.targetHealth = self.targetIndicator:AddValue({key = 'Health:', value = '0'})
+        self.targetDistance = self.targetIndicator:AddValue({key = 'Distance:', value = '0m'})
+        self.targetTool = self.targetIndicator:AddValue({key = 'Tool:', value = 'nil'})
+        self:SetTheme(library.theme);
         self:SetOpen(true);
         self.hasInit = true
-    end;
 
-    function Library:CreateSettingsTab(menu)
-        local flags = Library.flags;
-        local options = Library.options;
-        local settings = menu:AddTab("Settings", 100); do 
-            local main_section = settings:AddSection("Main", 1); do
-                main_section:AddBind({text = "Open / Close", flag = "togglebind", nomouse = true, noindicator = true, bind = Enum.KeyCode.End, callback = function()
-                    Library:SetOpen(not Library.open)
-                end});
-                main_section:AddButton({text = "Join Discord",  callback = function()
-                    local res = syn.request({
-                        Url = "http://127.0.0.1:6463/rpc?v=1",
-                        Method = "POST",
-                        Headers = {
-                            ["Content-Type"] = "application/json",
-                            Origin = "https://discord.com"
-                        },
-                        Body = game:GetService("HttpService"):JSONEncode({
-                            cmd = "INVITE_BROWSER",
-                            nonce = game:GetService("HttpService"):GenerateGUID(false),
-                            args = {code = "octohook"};
-                        });
-                    });
-                    if res.Success then
-                        Library:SendNotification("DISCORD PROMPT | Sent Invite Prompt" , 3);
-                    end;
-                end});
-                main_section:AddButton({text = "Copy Server Connect Script", callback = function()
-                    setclipboard(([[game:GetService("TeleportService"):TeleportToPlaceInstance(%s, "%s")]]):format(game.PlaceId, game.JobId));
-                end});
-                main_section:AddButton({text = "Rejoin Game", confirm = true, callback = function()
-                    game:GetService("TeleportService"):Teleport(game.PlaceId);
-                end})
-            end;
+    end
 
-            -- Configurations
-            local configuration_section = settings:AddSection("Configuration", 1); do
-                local function refresh_configs()
-                    options.selected_config:ClearValues();
-                    for _,v in next, listfiles(Library.cheatname .."/" .. Library.gamename .. "/configs") do
-                        local ext = "."..v:split(".")[#v:split(".")];
-                        if ext == Library.fileext then
-                            options.selected_config:AddValue(v:split("\\")[#v:split("\\")]:sub(1,-#ext-1))
-                        end
-                    end
+    function library:CreateSettingsTab(menu)
+        local settingsTab = menu:AddTab('Settings', 999);
+        local configSection = settingsTab:AddSection('Config', 2);
+        local mainSection = settingsTab:AddSection('Main', 1);
+
+        configSection:AddBox({text = 'Config Name', flag = 'configinput'})
+        configSection:AddList({text = 'Config', flag = 'selectedconfig'})
+
+        local function refreshConfigs()
+            library.options.selectedconfig:ClearValues();
+            for _,v in next, listfiles(self.cheatname..'/'..self.gamename..'/configs') do
+                local ext = '.'..v:split('.')[#v:split('.')];
+                if ext == self.fileext then
+                    library.options.selectedconfig:AddValue(v:split('\\')[#v:split('\\')]:sub(1,-#ext-1))
                 end
-            
-                configuration_section:AddBox({text = "Config Name", flag = "configinput"})
-                configuration_section:AddList({text = "Config", flag = "selected_config"})
-                configuration_section:AddButton({text = "Load", confirm = true, callback = function()
-                    Library:LoadConfig(flags.selected_config);
-                end});
-                configuration_section:AddButton({text = "Save", confirm = true, callback = function()
-                    Library:SaveConfig(flags.selected_config);
-                end});
-                configuration_section:AddButton({text = "Create", confirm = true, callback = function()
-                    if Library:GetConfig(flags.configinput) then
-                        Library:SendNotification("Config \""..flags.configinput.."\" already exists.", 5, c3new(1,0,0));
-                        return
-                    end
-                    writefile(Library.cheatname.."/"..Library.gamename.."/configs/"..flags.configinput.. Library.fileext, http:JSONEncode({}));
-                    refresh_configs();
-                end})
-                configuration_section:AddButton({text = "Delete", confirm = true, callback = function()
-                    if Library:GetConfig(flags.selectedconfig) then
-                        delfile(Library.cheatname.."/"..Library.gamename.."/configs/"..flags.selectedconfig.. Library.fileext);
-                        refresh_configs();
-                    end;
-                end});
-                configuration_section:AddButton({text = "Refresh", callback = function()
-                    refresh_configs();
-                end});
-                refresh_configs();
+            end
+        end
 
-                -- Scripts
-                --[[configuration_section:AddSeparator({text = "Scripts"});
-                local function refresh_scripts()
-                    options.selected_script:ClearValues();
-                    for _,v in next, listfiles(Library.cheatname .."/" .. Library.gamename .. "/scripts") do
-                        local ext = "."..v:split(".")[#v:split(".")];
-                        if ext == ".lua" then
-                            options.selected_script:AddValue(v:split("\\")[#v:split("\\")]:sub(1,-#ext-1))
-                        end
-                    end
-                end
-            
-                configuration_section:AddList({text = "Script", flag = "selected_script"})
-                configuration_section:AddButton({text = "Load", confirm = true, callback = function()
-                    loadfile(Library.cheatname.."/"..Library.gamename.."/scripts/"..flags.selected_script.. ".lua")();
-                end});
-                configuration_section:AddButton({text = "Delete", confirm = true, callback = function()
-                    if Library:GetConfig(flags.selected_script) then
-                        delfile(Library.cheatname.."/"..Library.gamename.."/scripts/"..flags.selected_script.. ".lua");
-                        refresh_scripts();
-                    end;
-                end});
-                configuration_section:AddButton({text = "Refresh", callback = function()
-                    refresh_scripts();
-                end});
-                refresh_scripts();]]
-            end;
+        configSection:AddButton({text = 'Load', confirm = true, callback = function()
+            library:LoadConfig(library.flags.selectedconfig);
+        end}):AddButton({text = 'Save', confirm = true, callback = function()
+            library:SaveConfig(library.flags.selectedconfig);
+        end})
 
-            -- Indicators
-            local indicators_section = settings:AddSection("Indicators", 1); do
-                indicators_section:AddToggle({text = 'Keybind Indicator', flag = 'keybind_indicator', callback = function(bool)
-                    Library.keyIndicator:SetEnabled(bool);
-                end})
-                indicators_section:AddSlider({text = 'Position X', flag = 'keybind_indicator_x', min = 0, max = 100, increment = .1, value = .5, callback = function()
-                    Library.keyIndicator:SetPosition(newUDim2(Library.flags.keybind_indicator_x / 100, 0, Library.flags.keybind_indicator_y / 100, 0));    
-                end});
-                indicators_section:AddSlider({text = 'Position Y', flag = 'keybind_indicator_y', min = 0, max = 100, increment = .1, value = 35, callback = function()
-                    Library.keyIndicator:SetPosition(newUDim2(Library.flags.keybind_indicator_x / 100, 0, Library.flags.keybind_indicator_y / 100, 0));    
-                end});
+        configSection:AddButton({text = 'Create', confirm = true, callback = function()
+            if library:GetConfig(library.flags.configinput) then
+                library:SendNotification('Config \''..library.flags.configinput..'\' already exists.', 5, c3new(1,0,0));
+                return
+            end
+            writefile(self.cheatname..'/'..self.gamename..'/configs/'..library.flags.configinput.. self.fileext, http:JSONEncode({}));
+            refreshConfigs()
+        end}):AddButton({text = 'Delete', confirm = true, callback = function()
+            if library:GetConfig(library.flags.selectedconfig) then
+                delfile(self.cheatname..'/'..self.gamename..'/configs/'..library.flags.selectedconfig.. self.fileext);
+                refreshConfigs()
+            end
+        end})
+
+        refreshConfigs()
+
+        mainSection:AddBind({text = 'Open / Close', flag = 'togglebind', nomouse = true, noindicator = true, bind = Enum.KeyCode.End, callback = function()
+            library:SetOpen(not library.open)
+        end});
+
+        mainSection:AddToggle({text = 'Disable Movement If Open', flag = 'disablemenumovement', callback = function(bool)
+            if bool and library.open then
+                actionservice:BindAction(
+                    'FreezeMovement',
+                    function()
+                        return Enum.ContextActionResult.Sink
+                    end,
+                    false,
+                    unpack(Enum.PlayerActions:GetEnumItems())
+                )
+            else
+                actionservice:UnbindAction('FreezeMovement');
+            end
+        end})
+
+        mainSection:AddButton({text = 'Join Discord', flag = 'joindiscord', confirm = true, callback = function()
+            local res = syn.request({
+                Url = 'http://127.0.0.1:6463/rpc?v=1',
+                Method = 'POST',
+                Headers = {
+                    ['Content-Type'] = 'application/json',
+                    Origin = 'https://discord.com'
+                },
+                Body = game:GetService('HttpService'):JSONEncode({
+                    cmd = 'INVITE_BROWSER',
+                    nonce = game:GetService('HttpService'):GenerateGUID(false),
+                    args = {code = 'seU6gab'}
+                })
+            })
+            if res.Success then
+                library:SendNotification(library.cheatname..' | joined discord', 3);
+            end
+        end})
         
-                indicators_section:AddSeparator({text = 'Watermark'})
-                indicators_section:AddToggle({text = 'Enabled', flag = 'watermark_enabled'});
-                indicators_section:AddList({text = 'Position', flag = 'watermark_pos', selected = 'Top', values = {'Top', 'Top Left', 'Top Right', 'Bottom Left', 'Bottom Right', 'Custom'}, callback = function(val)
-                    Library.watermark.lock = val;
-                end});
+        mainSection:AddButton({text = 'Copy Discord', flag = 'copydiscord', callback = function()
+            setclipboard('discord.gg/seU6gab')
+        end})
 
-                indicators_section:AddSlider({text = 'Custom X', flag = 'watermark_x', suffix = '%', min = 0, max = 100, increment = .1});
-                indicators_section:AddSlider({text = 'Custom Y', flag = 'watermark_y', suffix = '%', min = 0, max = 100, increment = .1});
-                indicators_section:AddSlider({text = 'Refresh rate', flag = 'watermark_refres_rate', suffix = 'ms', min = 0, max = 5000, value = 5000, callback = function(val)
-                    Library.watermark.refreshrate = val;
-                end});
+        mainSection:AddButton({text = 'Rejoin Server', confirm = true, callback = function()
+            game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId);
+        end})
 
-                Library.watermark.refreshrate = flags.watermark_refres_rate;
-                Library.watermark.lock = flags.watermark_pos;
-            end;
+        mainSection:AddButton({text = 'Rejoin Game', confirm = true, callback = function()
+            game:GetService("TeleportService"):Teleport(game.PlaceId);
+        end})
 
-            -- Menu stuff
-            local menu_section = settings:AddSection("Menu", 2); do
-                local theme_strings = {"Custom"};
-                for _, v in next, Library.themes do
-                    table.insert(theme_strings, v.name);
-                end;
-                local setByPreset = false;
+        mainSection:AddButton({text = 'Copy Join Script', callback = function()
+            setclipboard(([[game:GetService("TeleportService"):TeleportToPlaceInstance(%s, "%s")]]):format(game.PlaceId, game.JobId))
+        end})
 
-                menu_section:AddList({text = "Presets", flag = "preset_theme", values = theme_strings, callback = function(new_theme)
-                    if new_theme == "Custom" then return end
-                    setByPreset = true
-                    for _,v in next, Library.themes do
-                        if v.name == new_theme then
-                            for x, d in pairs(Library.options) do
-                                if v.theme[tostring(x)] ~= nil then
-                                    d:SetColor(v.theme[tostring(x)]);
-                                end;
-                            end;
-                            Library:SetTheme(v.theme);
-                            break;
-                        end;
-                    end;
-                    setByPreset = false
-                end}):Select("Default");
-            
-                for i, v in pairs(Library.theme) do
-                    menu_section:AddColor({text = i, flag = i, color = Library.theme[i], callback = function(c3)
-                        Library.theme[i] = c3;
-                        Library:SetTheme(Library.theme);
-                        if not setByPreset and not setByConfig then 
-                            Library.options.preset_theme:Select("Custom");
-                        end;
-                    end});
-                end;
-            end;
-        end;
+        mainSection:AddButton({text = 'Copy Game Invite', callback = function()
+            setclipboard(([[Roblox.GameLauncher.joinGameInstance(%s, "%s"))]]):format(game.PlaceId, game.JobId))
+        end})
 
-        return settings;
-    end;
-    Library:init();
-end;
+        mainSection:AddButton({text = 'Unload', confirm = true, callback = function()
+            library:Unload();
+        end})
 
+        mainSection:AddSeparator({text = 'Keybinds'});
+        mainSection:AddToggle({text = 'Keybind Indicator', flag = 'keybind_indicator', callback = function(bool)
+            library.keyIndicator:SetEnabled(bool);
+        end})
+        mainSection:AddSlider({text = 'Position X', flag = 'keybind_indicator_x', min = 0, max = 100, increment = .1, value = .5, callback = function()
+            library.keyIndicator:SetPosition(newUDim2(library.flags.keybind_indicator_x / 100, 0, library.flags.keybind_indicator_y / 100, 0));    
+        end});
+        mainSection:AddSlider({text = 'Position Y', flag = 'keybind_indicator_y', min = 0, max = 100, increment = .1, value = 35, callback = function()
+            library.keyIndicator:SetPosition(newUDim2(library.flags.keybind_indicator_x / 100, 0, library.flags.keybind_indicator_y / 100, 0));    
+        end});
 
-local window = Library.NewWindow({title = "Temperate", size = UDim2.new(0, 625, 0, 808)});
-Library:CreateSettingsTab(window);
+        mainSection:AddSeparator({text = 'Watermark'})
+        mainSection:AddToggle({text = 'Enabled', flag = 'watermark_enabled'});
+        mainSection:AddList({text = 'Position', flag = 'watermark_pos', selected = 'Custom', values = {'Top', 'Top Left', 'Top Right', 'Bottom Left', 'Bottom Right', 'Custom'}, callback = function(val)
+            library.watermark.lock = val;
+        end})
+        mainSection:AddSlider({text = 'Custom X', flag = 'watermark_x', suffix = '%', min = 0, max = 100, increment = .1});
+        mainSection:AddSlider({text = 'Custom Y', flag = 'watermark_y', suffix = '%', min = 0, max = 100, increment = .1});
+
+        local themeStrings = {"Custom"};
+        for _,v in next, library.themes do
+            table.insert(themeStrings, v.name)
+        end
+        local themeTab = menu:AddTab('Theme', 990);
+        local themeSection = themeTab:AddSection('Theme', 1);
+        local setByPreset = false
+
+        themeSection:AddList({text = 'Presets', flag = 'preset_theme', values = themeStrings, callback = function(newTheme)
+            if newTheme == "Custom" then return end
+            setByPreset = true
+            for _,v in next, library.themes do
+                if v.name == newTheme then
+                    for x, d in pairs(library.options) do
+                        if v.theme[tostring(x)] ~= nil then
+                            d:SetColor(v.theme[tostring(x)])
+                        end
+                    end
+                    library:SetTheme(v.theme)
+                    break
+                end
+            end
+            setByPreset = false
+        end}):Select('Default');
+
+        for i, v in pairs(library.theme) do
+            themeSection:AddColor({text = i, flag = i, color = library.theme[i], callback = function(c3)
+                library.theme[i] = c3
+                library:SetTheme(library.theme)
+                if not setByPreset and not setByConfig then 
+                    library.options.preset_theme:Select('Custom')
+                end
+            end});
+        end
+
+        return settingsTab;
+    end
+
+    getgenv().library = library
+    return library
