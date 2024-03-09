@@ -47,12 +47,12 @@ do
             ['ping'] = 0;
         };
         images = {
-            ['gradientp90'] = 'https://raw.githubusercontent.com/tehtestedd/fonts/main/gradientp90.png';
-            ['gradientp45'] = 'https://raw.githubusercontent.com/tehtestedd/fonts/main/unknown.png';
-            ['colorhue'] = 'https://raw.githubusercontent.com/tehtestedd/fonts/main/colorhue.png';
-            ['colortrans'] = 'https://raw.githubusercontent.com/tehtestedd/fonts/main/unknown%20(43).png';
-            ['colorsat1'] = 'https://raw.githubusercontent.com/tehtestedd/fonts/main/colorsat1.png';
-            ['colorsat2'] = 'https://raw.githubusercontent.com/tehtestedd/fonts/main/colorsat2.png';
+            ['gradientp90'] = 'https://github.com/skr9ter/90/blob/main/gradientp90.png';
+            ['gradientp45'] = 'https://github.com/skr9ter/45/blob/main/gradientp45.png';
+            ['colorhue'] = 'https://github.com/skr9ter/clrsat1/blob/main/colorhue.png';
+            ['colortrans'] = 'https://github.com/skr9ter/clrtrans/blob/main/colortrans.png';
+            ['colorsat1'] = 'https://github.com/skr9ter/clrsta2/blob/main/colorsat1.png';
+            ['colorsat2'] = 'https://github.com/skr9ter/clrsat22/blob/main/colorsat2.png';
         };
         numberStrings = {['Zero'] = 0, ['One'] = 1, ['Two'] = 2, ['Three'] = 3, ['Four'] = 4, ['Five'] = 5, ['Six'] = 6, ['Seven'] = 7, ['Eight'] = 8, ['Nine'] = 9};
         open = false;
